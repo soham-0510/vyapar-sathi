@@ -1,19 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Header } from '@/components/header';
 import { SterlingGateNavigation } from '@/components/ui/sterling-gate-navigation';
 import { ElegantBackgroundShapes } from '@/components/elegant-background';
 import { Edit2, Save, Lock, Bell, LogOut } from 'lucide-react';
-import { useTheme } from 'next-themes';
 
 export default function ProfilePage() {
-  const { setTheme } = useTheme();
-
-  useEffect(() => {
-    setTheme('dark');
-  }, [setTheme]);
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
   const [isEditingBusiness, setIsEditingBusiness] = useState(false);
   const [personalData, setPersonalData] = useState({
