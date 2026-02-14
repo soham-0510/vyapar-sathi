@@ -1,18 +1,16 @@
-Copy-paste this component to /components/ui folder:
-```tsx
-sterling-gate-kinetic-navigation.tsx
+'use client';
 
-import React, { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { CustomEase } from "gsap/CustomEase";
+import React, { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import { CustomEase } from 'gsap/CustomEase';
+import Link from 'next/link';
 
 // Register GSAP Plugins safely
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   gsap.registerPlugin(CustomEase);
 }
 
-export function Component() {
-  // We need a ref for the parent container to scope GSAP
+export function SterlingGateNavigation() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -22,373 +20,224 @@ export function Component() {
 
     // Create custom easing
     try {
-        if (!gsap.parseEase("main")) {
-            CustomEase.create("main", "0.65, 0.01, 0.05, 0.99");
-            gsap.defaults({ ease: "main", duration: 0.7 });
-        }
+      if (!gsap.parseEase('main')) {
+        CustomEase.create('main', '0.65, 0.01, 0.05, 0.99');
+        gsap.defaults({ ease: 'main', duration: 0.7 });
+      }
     } catch (e) {
-        console.warn("CustomEase failed to load, falling back to default.", e);
-        gsap.defaults({ ease: "power2.out", duration: 0.7 });
+      console.warn('CustomEase failed to load, falling back to default.', e);
+      gsap.defaults({ ease: 'power2.out', duration: 0.7 });
     }
 
     const ctx = gsap.context(() => {
-      // 1. Arrow Animation (Removed from indicator, but keeping logic if arrow existed/restored elsewhere)
-      // Since arrow is removed from JSX, this selector won't find anything, which is fine (safe check).
-      const arrowLine = document.querySelector(".arrow-line");
-      if (arrowLine) {
-        const pathLength = (arrowLine as SVGPathElement).getTotalLength();
-        gsap.set(arrowLine, { strokeDasharray: pathLength, strokeDashoffset: pathLength });
-        const arrowTl = gsap.timeline({ repeat: -1, repeatDelay: 0.8 });
-        arrowTl
-          .to(arrowLine, { strokeDashoffset: 0, duration: 1, ease: "power2.out" })
-          .to({}, { duration: 1.2 })
-          .to(arrowLine, { strokeDashoffset: -pathLength, duration: 0.6, ease: "power2.in" })
-          .set(arrowLine, { strokeDashoffset: pathLength });
-      }
+      const menuItems = containerRef.current!.querySelectorAll('.menu-list-item[data-shape]');
+      const shapesContainer = containerRef.current!.querySelector('.ambient-background-shapes');
 
-      // 2. Shape Hover
-      // Updated Selectors: .menu-list-item -> .menu-list-item, .abstract-shapes -> .ambient-background-shapes
-      const menuItems = containerRef.current!.querySelectorAll(".menu-list-item[data-shape]");
-      const shapesContainer = containerRef.current!.querySelector(".ambient-background-shapes");
-      
       menuItems.forEach((item) => {
-        const shapeIndex = item.getAttribute("data-shape");
-        // Updated Selector: .shape -> .bg-shape
+        const shapeIndex = item.getAttribute('data-shape');
         const shape = shapesContainer ? shapesContainer.querySelector(`.bg-shape-${shapeIndex}`) : null;
-        
+
         if (!shape) return;
 
-        // Updated Selector: .shape-el -> .shape-element
-        const shapeEls = shape.querySelectorAll(".shape-element");
+        const shapeEls = shape.querySelectorAll('.shape-element');
 
         const onEnter = () => {
-             if (shapesContainer) {
-                 // Updated Selector: .shape -> .bg-shape
-                 shapesContainer.querySelectorAll(".bg-shape").forEach((s) => s.classList.remove("active"));
-             }
-             shape.classList.add("active");
-             
-             gsap.fromTo(shapeEls, 
-                { scale: 0.5, opacity: 0, rotation: -10 },
-                { scale: 1, opacity: 1, rotation: 0, duration: 0.6, stagger: 0.08, ease: "back.out(1.7)", overwrite: "auto" }
-             );
-        };
-        
-        const onLeave = () => {
-            gsap.to(shapeEls, {
-                scale: 0.8, opacity: 0, duration: 0.3, ease: "power2.in",
-                onComplete: () => shape.classList.remove("active"),
-                overwrite: "auto"
-            });
+          if (shapesContainer) {
+            shapesContainer.querySelectorAll('.bg-shape').forEach((s) => s.classList.remove('active'));
+          }
+          shape.classList.add('active');
+
+          gsap.fromTo(
+            shapeEls,
+            { scale: 0.5, opacity: 0, rotation: -10 },
+            { scale: 1, opacity: 1, rotation: 0, duration: 0.6, stagger: 0.08, ease: 'back.out(1.7)', overwrite: 'auto' }
+          );
         };
 
-        item.addEventListener("mouseenter", onEnter);
-        item.addEventListener("mouseleave", onLeave);
-        
+        const onLeave = () => {
+          gsap.to(shapeEls, {
+            scale: 0.8,
+            opacity: 0,
+            duration: 0.3,
+            ease: 'power2.in',
+            onComplete: () => shape.classList.remove('active'),
+            overwrite: 'auto',
+          });
+        };
+
+        item.addEventListener('mouseenter', onEnter);
+        item.addEventListener('mouseleave', onLeave);
+
         (item as any)._cleanup = () => {
-            item.removeEventListener("mouseenter", onEnter);
-            item.removeEventListener("mouseleave", onLeave);
+          item.removeEventListener('mouseenter', onEnter);
+          item.removeEventListener('mouseleave', onLeave);
         };
       });
-      
     }, containerRef);
 
     return () => {
-        ctx.revert();
-        if (containerRef.current) {
-            const items = containerRef.current.querySelectorAll(".menu-list-item[data-shape]");
-            items.forEach((item: any) => item._cleanup && item._cleanup());
-        }
+      ctx.revert();
+      if (containerRef.current) {
+        const items = containerRef.current.querySelectorAll('.menu-list-item[data-shape]');
+        items.forEach((item: any) => item._cleanup && item._cleanup());
+      }
     };
   }, []);
 
   // Menu Open/Close Animation Effect
   useEffect(() => {
-      if (!containerRef.current) return;
-      
-      const ctx = gsap.context(() => {
-        // Updated Selectors: .nav -> .nav-overlay-wrapper, .menu -> .menu-content
-        const navWrap = containerRef.current!.querySelector(".nav-overlay-wrapper");
-        const menu = containerRef.current!.querySelector(".menu-content");
-        const overlay = containerRef.current!.querySelector(".overlay");
-        // Updated Selector: .bg-panel -> .backdrop-layer
-        const bgPanels = containerRef.current!.querySelectorAll(".backdrop-layer");
-        // Updated Selector: .menu-link -> .nav-link
-        const menuLinks = containerRef.current!.querySelectorAll(".nav-link");
-        const fadeTargets = containerRef.current!.querySelectorAll("[data-menu-fade]");
-        
-        // Updated Selector: .menu-button -> .nav-close-btn
-        const menuButton = containerRef.current!.querySelector(".nav-close-btn");
-        const menuButtonTexts = menuButton?.querySelectorAll("p");
-        // Updated Selector: .menu-button-icon -> .menu-button-icon (unchanged in CSS/JSX?) No, wait, CSS had .menu-button-icon
-        const menuButtonIcon = menuButton?.querySelector(".menu-button-icon");
+    if (!containerRef.current) return;
 
-        const tl = gsap.timeline();
-        
-        if (isMenuOpen) {
-            // OPEN
-            if (navWrap) navWrap.setAttribute("data-nav", "open");
-            
-            tl.set(navWrap, { display: "block" })
-              .set(menu, { xPercent: 0 }, "<")
-              // Animate Button Text Swapping if it exists
-              .fromTo(menuButtonTexts, { yPercent: 0 }, { yPercent: -100, stagger: 0.2 })
-              .fromTo(menuButtonIcon, { rotate: 0 }, { rotate: 315 }, "<")
-              
-              .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1 }, "<")
-              .fromTo(bgPanels, { xPercent: 101 }, { xPercent: 0, stagger: 0.12, duration: 0.575 }, "<")
-              .fromTo(menuLinks, { yPercent: 140, rotate: 10 }, { yPercent: 0, rotate: 0, stagger: 0.05 }, "<+=0.35");
-              
-            if (fadeTargets.length) {
-                // Keep clearProps: "all" for blog entry fix
-                tl.fromTo(fadeTargets, { autoAlpha: 0, yPercent: 50 }, { autoAlpha: 1, yPercent: 0, stagger: 0.04, clearProps: "all" }, "<+=0.2");
-            }
+    const ctx = gsap.context(() => {
+      const navWrap = containerRef.current!.querySelector('.nav-overlay-wrapper');
+      const menu = containerRef.current!.querySelector('.menu-content');
+      const overlay = containerRef.current!.querySelector('.overlay');
+      const bgPanels = containerRef.current!.querySelectorAll('.backdrop-layer');
+      const menuLinks = containerRef.current!.querySelectorAll('.nav-link');
+      const fadeTargets = containerRef.current!.querySelectorAll('[data-menu-fade]');
+      const menuButton = containerRef.current!.querySelector('.nav-close-btn');
+      const menuButtonTexts = menuButton?.querySelectorAll('p');
+      const menuButtonIcon = menuButton?.querySelector('.menu-button-icon');
 
-        } else {
-            // CLOSE
-            if (navWrap) navWrap.setAttribute("data-nav", "closed");
+      const tl = gsap.timeline();
 
-            tl.to(overlay, { autoAlpha: 0 })
-              .to(menu, { xPercent: 120 }, "<")
-              // Animate Button Text and Icon Back
-              .to(menuButtonTexts, { yPercent: 0 }, "<")
-              .to(menuButtonIcon, { rotate: 0 }, "<")
+      if (isMenuOpen) {
+        // OPEN
+        if (navWrap) navWrap.setAttribute('data-nav', 'open');
 
-              .set(navWrap, { display: "none" });
+        tl.set(navWrap, { display: 'block' })
+          .set(menu, { xPercent: 0 }, '<')
+          .fromTo(menuButtonTexts, { yPercent: 0 }, { yPercent: -100, stagger: 0.2 })
+          .fromTo(menuButtonIcon, { rotate: 0 }, { rotate: 315 }, '<')
+          .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1 }, '<')
+          .fromTo(bgPanels, { xPercent: 101 }, { xPercent: 0, stagger: 0.12, duration: 0.575 }, '<')
+          .fromTo(menuLinks, { yPercent: 140, rotate: 10 }, { yPercent: 0, rotate: 0, stagger: 0.05 }, '<+=0.35');
+
+        if (fadeTargets.length) {
+          tl.fromTo(fadeTargets, { autoAlpha: 0, yPercent: 50 }, { autoAlpha: 1, yPercent: 0, stagger: 0.04, clearProps: 'all' }, '<+=0.2');
         }
+      } else {
+        // CLOSE
+        if (navWrap) navWrap.setAttribute('data-nav', 'closed');
 
-      }, containerRef);
-      
-      return () => ctx.revert();
+        tl.to(overlay, { autoAlpha: 0 })
+          .to(menu, { xPercent: 120 }, '<')
+          .to(menuButtonTexts, { yPercent: 0 }, '<')
+          .to(menuButtonIcon, { rotate: 0 }, '<')
+          .set(navWrap, { display: 'none' });
+      }
+    }, containerRef);
+
+    return () => ctx.revert();
   }, [isMenuOpen]);
 
   // keydown Escape handling
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-        if (e.key === "Escape" && isMenuOpen) {
-            setIsMenuOpen(false);
-        }
+      if (e.key === 'Escape' && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
     };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
   }, [isMenuOpen]);
 
-  const toggleMenu = () => setIsMenuOpen(prev => !prev);
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const closeMenu = () => setIsMenuOpen(false);
 
+  const menuItems = [
+    { label: 'Dashboard', href: '/dashboard', index: 0 },
+    { label: 'Resources', href: '/resources', index: 1 },
+    { label: 'Payments', href: '/payments', index: 2 },
+    { label: 'Staff', href: '/staff', index: 3 },
+    { label: 'Suppliers', href: '/suppliers', index: 4 },
+  ];
+
   return (
-    <div ref={containerRef}>
-        <div className="site-header-wrapper">
-          <header className="header">
-            <div className="container is--full">
-              <nav className="nav-row">
-                <a href="#" aria-label="home" className="nav-logo-row w-inline-block"></a>
-                <div className="nav-row__right">
-                  {/* Clean Menu Indicator (Arrow Removed) */}
-                  <div className="nav-toggle-label" onClick={toggleMenu} style={{ cursor: 'pointer', pointerEvents: 'auto' }}>
-                    <span className="toggle-text">click me</span>
-                  </div>
-                  
-                  {/* Restored Menu Button */}
-                  <button role="button" className="nav-close-btn" onClick={toggleMenu} style={{ pointerEvents: 'auto' }}>
-                    <div className="menu-button-text">
-                      <p className="p-large">Menu</p>
-                      <p className="p-large">Close</p>
-                    </div>
-                    <div className="icon-wrap">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="100%"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        className="menu-button-icon"
-                      >
-                        <path
-                          d="M7.33333 16L7.33333 -3.2055e-07L8.66667 -3.78832e-07L8.66667 16L7.33333 16Z"
-                          fill="currentColor"
-                        ></path>
-                        <path
-                          d="M16 8.66667L-2.62269e-07 8.66667L-3.78832e-07 7.33333L16 7.33333L16 8.66667Z"
-                          fill="currentColor"
-                        ></path>
-                        <path
-                          d="M6 7.33333L7.33333 7.33333L7.33333 6C7.33333 6.73637 6.73638 7.33333 6 7.33333Z"
-                          fill="currentColor"
-                        ></path>
-                        <path
-                          d="M10 7.33333L8.66667 7.33333L8.66667 6C8.66667 6.73638 9.26362 7.33333 10 7.33333Z"
-                          fill="currentColor"
-                        ></path>
-                        <path
-                          d="M6 8.66667L7.33333 8.66667L7.33333 10C7.33333 9.26362 6.73638 8.66667 6 8.66667Z"
-                          fill="currentColor"
-                        ></path>
-                        <path
-                          d="M10 8.66667L8.66667 8.66667L8.66667 10C8.66667 9.26362 9.26362 8.66667 10 8.66667Z"
-                          fill="currentColor"
-                        ></path>
-                      </svg>
-                    </div>
-                  </button>
-                </div>
-              </nav>
-            </div>
-          </header>
+    <div ref={containerRef} className="sterling-gate-nav">
+      {/* Menu Button */}
+      <button onClick={toggleMenu} className="nav-close-btn fixed top-6 right-6 z-50 flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+        <span className="menu-button-icon">☰</span>
+        <div className="flex flex-col overflow-hidden">
+          <p>Menu</p>
+          <p>Close</p>
         </div>
+      </button>
 
-      <section className="fullscreen-menu-container">
-        <div data-nav="closed" className="nav-overlay-wrapper">
-          {/* Overlay must stay above or below depending on desired clickability. 
-              The original has it cover content. */}
-          <div className="overlay" onClick={closeMenu}></div>
-          <nav className="menu-content">
-            <div className="menu-bg">
-              <div className="backdrop-layer first"></div>
-              <div className="backdrop-layer second"></div>
-              <div className="backdrop-layer"></div>
+      {/* Overlay */}
+      <div className="overlay fixed inset-0 bg-black/50 opacity-0 pointer-events-none z-40" style={{ display: 'none' }} onClick={closeMenu} />
 
-              {/* Abstract shapes container */}
-              <div className="ambient-background-shapes">
-                {/* Shape 1: Floating circles */}
-                <svg className="bg-shape bg-shape-1" viewBox="0 0 400 400" fill="none">
-                  <circle className="shape-element" cx="80" cy="120" r="40" fill="rgba(99,102,241,0.15)" />
-                  <circle className="shape-element" cx="300" cy="80" r="60" fill="rgba(139,92,246,0.12)" />
-                  <circle className="shape-element" cx="200" cy="300" r="80" fill="rgba(236,72,153,0.1)" />
-                  <circle className="shape-element" cx="350" cy="280" r="30" fill="rgba(99,102,241,0.15)" />
-                </svg>
+      {/* Navigation Wrapper */}
+      <div className="nav-overlay-wrapper fixed inset-0 z-40 pointer-events-none" data-nav="closed" style={{ display: 'none' }}>
+        <div className="menu-content fixed inset-0 pointer-events-auto">
+          {/* Background Panels */}
+          <div className="absolute inset-0">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div key={i} className="backdrop-layer absolute inset-0 bg-background/95" style={{ transform: 'translateX(101%)' }} />
+            ))}
+          </div>
 
-                {/* Shape 2: Wave pattern */}
-                <svg className="bg-shape bg-shape-2" viewBox="0 0 400 400" fill="none">
-                  <path
-                    className="shape-element"
-                    d="M0 200 Q100 100, 200 200 T 400 200"
-                    stroke="rgba(99,102,241,0.2)"
-                    strokeWidth="60"
-                    fill="none"
+          {/* Abstract shapes container */}
+          <div className="ambient-background-shapes absolute inset-0 pointer-events-none">
+            {menuItems.map((item) => (
+              <div key={item.index} className={`bg-shape bg-shape-${item.index} absolute inset-0`}>
+                {[0, 1, 2].map((j) => (
+                  <div
+                    key={j}
+                    className="shape-element absolute rounded-full bg-primary/10"
+                    style={{
+                      width: `${100 + j * 50}px`,
+                      height: `${100 + j * 50}px`,
+                      left: `${20 + j * 15}%`,
+                      top: `${30 + j * 20}%`,
+                    }}
                   />
-                  <path
-                    className="shape-element"
-                    d="M0 280 Q100 180, 200 280 T 400 280"
-                    stroke="rgba(139,92,246,0.15)"
-                    strokeWidth="40"
-                    fill="none"
-                  />
-                </svg>
-
-                {/* Shape 3: Grid dots */}
-                <svg className="bg-shape bg-shape-3" viewBox="0 0 400 400" fill="none">
-                  <circle className="shape-element" cx="50" cy="50" r="8" fill="rgba(99,102,241,0.3)" />
-                  <circle className="shape-element" cx="150" cy="50" r="8" fill="rgba(139,92,246,0.3)" />
-                  <circle className="shape-element" cx="250" cy="50" r="8" fill="rgba(236,72,153,0.3)" />
-                  <circle className="shape-element" cx="350" cy="50" r="8" fill="rgba(99,102,241,0.3)" />
-                  <circle className="shape-element" cx="100" cy="150" r="12" fill="rgba(139,92,246,0.25)" />
-                  <circle className="shape-element" cx="200" cy="150" r="12" fill="rgba(236,72,153,0.25)" />
-                  <circle className="shape-element" cx="300" cy="150" r="12" fill="rgba(99,102,241,0.25)" />
-                  <circle className="shape-element" cx="50" cy="250" r="10" fill="rgba(236,72,153,0.3)" />
-                  <circle className="shape-element" cx="150" cy="250" r="10" fill="rgba(99,102,241,0.3)" />
-                  <circle className="shape-element" cx="250" cy="250" r="10" fill="rgba(139,92,246,0.3)" />
-                  <circle className="shape-element" cx="350" cy="250" r="10" fill="rgba(236,72,153,0.3)" />
-                  <circle className="shape-element" cx="100" cy="350" r="6" fill="rgba(99,102,241,0.3)" />
-                  <circle className="shape-element" cx="200" cy="350" r="6" fill="rgba(139,92,246,0.3)" />
-                  <circle className="shape-element" cx="300" cy="350" r="6" fill="rgba(236,72,153,0.3)" />
-                </svg>
-
-                {/* Shape 4: Organic blobs */}
-                <svg className="bg-shape bg-shape-4" viewBox="0 0 400 400" fill="none">
-                  <path
-                    className="shape-element"
-                    d="M100 100 Q150 50, 200 100 Q250 150, 200 200 Q150 250, 100 200 Q50 150, 100 100"
-                    fill="rgba(99,102,241,0.12)"
-                  />
-                  <path
-                    className="shape-element"
-                    d="M250 200 Q300 150, 350 200 Q400 250, 350 300 Q400 250, 350 300 Q300 350, 250 300 Q200 250, 250 200"
-                    fill="rgba(236,72,153,0.1)"
-                  />
-                </svg>
-
-                {/* Shape 5: Diagonal lines */}
-                <svg className="bg-shape bg-shape-5" viewBox="0 0 400 400" fill="none">
-                  <line className="shape-element" x1="0" y1="100" x2="300" y2="400" stroke="rgba(99,102,241,0.15)" strokeWidth="30" />
-                  <line className="shape-element" x1="100" y1="0" x2="400" y2="300" stroke="rgba(139,92,246,0.12)" strokeWidth="25" />
-                  <line className="shape-element" x1="200" y1="0" x2="400" y2="200" stroke="rgba(236,72,153,0.1)" strokeWidth="20" />
-                </svg>
+                ))}
               </div>
-            </div>
+            ))}
+          </div>
 
-            <div className="menu-content-wrapper">
-              <ul className="menu-list">
-                <li className="menu-list-item" data-shape="1">
-                  <a href="#" className="nav-link w-inline-block">
-                    <p className="nav-link-text">About us</p>
-                    <div className="nav-link-hover-bg"></div>
-                  </a>
+          {/* Menu Links */}
+          <nav className="relative z-10 flex flex-col justify-center h-full px-8 md:px-16">
+            <ul className="space-y-6">
+              {menuItems.map((item) => (
+                <li
+                  key={item.index}
+                  className="menu-list-item"
+                  data-shape={item.index}
+                  onMouseEnter={() => {
+                    // Hover effect handled by GSAP
+                  }}
+                  onMouseLeave={() => {
+                    // Hover effect handled by GSAP
+                  }}
+                >
+                  <Link
+                    href={item.href}
+                    onClick={closeMenu}
+                    className="nav-link text-4xl md:text-6xl font-bold text-foreground hover:text-primary transition-colors"
+                  >
+                    {item.label}
+                  </Link>
                 </li>
-                <li className="menu-list-item" data-shape="2">
-                  <a href="#" className="nav-link w-inline-block">
-                    <p className="nav-link-text">Our work</p>
-                    <div className="nav-link-hover-bg"></div>
-                  </a>
-                </li>
-                <li className="menu-list-item" data-shape="3">
-                  <a href="#" className="nav-link w-inline-block">
-                    <p className="nav-link-text">Services</p>
-                    <div className="nav-link-hover-bg"></div>
-                  </a>
-                </li>
-                <li className="menu-list-item" data-shape="4">
-                  <a href="#" className="nav-link w-inline-block">
-                    <p className="nav-link-text" data-menu-fade>Blog</p>
-                    <div className="nav-link-hover-bg"></div>
-                  </a>
-                </li>
-                <li className="menu-list-item" data-shape="5">
-                  <a href="#" className="nav-link w-inline-block">
-                    <p className="nav-link-text">Contact us</p>
-                    <div className="nav-link-hover-bg"></div>
-                  </a>
-                </li>
-              </ul>
+              ))}
+            </ul>
+
+            {/* Additional Links */}
+            <div className="mt-12 pt-8 border-t border-border space-y-3" data-menu-fade>
+              <Link href="/ai-assistant" onClick={closeMenu} className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                AI Assistant
+              </Link>
+              <Link href="/dead-stock" onClick={closeMenu} className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Dead Stock
+              </Link>
+              <Link href="/settings" onClick={closeMenu} className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Settings
+              </Link>
             </div>
           </nav>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
-
-
-demo.tsx
-import { Component } from "@/components/ui/sterling-gate-kinetic-navigation";
-
-export default function DemoOne() {
-  return <Component />;
-}
-
-```
-
-Install NPM dependencies:
-```bash
-gsap
-```
-
-Extend existing Tailwind 4 index.css with this code (or if project uses Tailwind 3, extend tailwind.config.js or globals.css):
-```css
-@import "tailwindcss";
-@import "tw-animate-css";
-
-:root {
-  --color-primary: #6366f1;
-  --color-dark: #131313;
-  --color-neutral-100: #f5f5f5;
-  --color-neutral-200: #e5e5e5;
-  --color-neutral-300: #d4d4d4;
-  --color-neutral-800: #262626;
-  --size-container: 1400px;
-  --container-padding: 2em;
-  --section-padding: 4em;
-  --gap: 1.5em;
-  --cubic-default: cubic-bezier(0.65, 0.05, 0, 1);
-}
-
-```
