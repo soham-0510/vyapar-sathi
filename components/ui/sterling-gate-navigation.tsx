@@ -169,7 +169,7 @@ export function SterlingGateNavigation() {
 
       {/* Overlay */}
       <div
-        className="overlay fixed inset-0 bg-black/60 opacity-0 z-40"
+        className="overlay fixed inset-0 bg-black/70 backdrop-blur-md opacity-0 z-40"
         style={{ display: isMenuOpen ? 'block' : 'none', pointerEvents: isMenuOpen ? 'auto' : 'none' }}
         onClick={closeMenu}
       />
@@ -205,24 +205,18 @@ export function SterlingGateNavigation() {
           </div>
 
           {/* Menu Links */}
-          <nav className="relative z-10 flex flex-col justify-center h-full px-8 md:px-16">
-            <ul className="space-y-6">
+          <nav className="relative z-10 flex flex-col justify-center h-full px-8 md:px-16 py-20">
+            <ul className="flex flex-col gap-3 md:gap-4">
               {menuItems.map((item) => (
                 <li
                   key={item.index}
-                  className="menu-list-item"
+                  className="menu-list-item overflow-hidden"
                   data-shape={item.index}
-                  onMouseEnter={() => {
-                    // Hover effect handled by GSAP
-                  }}
-                  onMouseLeave={() => {
-                    // Hover effect handled by GSAP
-                  }}
                 >
                   <Link
                     href={item.href}
                     onClick={closeMenu}
-                    className="nav-link text-4xl md:text-6xl font-bold text-foreground hover:text-primary transition-colors"
+                    className="nav-link block text-2xl md:text-4xl font-bold text-foreground hover:text-primary transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -231,15 +225,18 @@ export function SterlingGateNavigation() {
             </ul>
 
             {/* Additional Links */}
-            <div className="mt-12 pt-8 border-t border-border space-y-3" data-menu-fade>
-              <Link href="/ai-assistant" onClick={closeMenu} className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+            <div className="mt-8 pt-6 border-t border-border flex flex-wrap gap-x-6 gap-y-3" data-menu-fade>
+              <Link href="/ai-assistant" onClick={closeMenu} className="text-base text-muted-foreground hover:text-primary transition-colors">
                 AI Assistant
               </Link>
-              <Link href="/dead-stock" onClick={closeMenu} className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link href="/dead-stock" onClick={closeMenu} className="text-base text-muted-foreground hover:text-primary transition-colors">
                 Dead Stock
               </Link>
-              <Link href="/settings" onClick={closeMenu} className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link href="/settings" onClick={closeMenu} className="text-base text-muted-foreground hover:text-primary transition-colors">
                 Settings
+              </Link>
+              <Link href="/profile" onClick={closeMenu} className="text-base text-muted-foreground hover:text-primary transition-colors">
+                Profile
               </Link>
             </div>
           </nav>
