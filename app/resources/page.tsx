@@ -40,6 +40,13 @@ const resources = [
 
 export default function ResourcesPage() {
   const [sortBy, setSortBy] = useState('name');
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newResource, setNewResource] = useState({
+    name: '',
+    quantity: '',
+    reorderLevel: '',
+    supplier: '',
+  });
 
   const fadeUpVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -88,11 +95,78 @@ export default function ResourcesPage() {
                 Manage your inventory and stock levels
               </p>
             </div>
-            <button className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors">
+            <button 
+              onClick={() => setShowAddForm(!showAddForm)}
+              className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors">
               <Plus className="w-5 h-5" />
               Add Resource
             </button>
           </motion.div>
+
+          {/* Add Resource Form */}
+          {showAddForm && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="bg-card rounded-lg border border-border p-6 mb-6"
+            >
+              <h3 className="text-lg font-semibold mb-4">Add New Resource</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <input
+                  type="text"
+                  placeholder="Resource name"
+                  value={newResource.name}
+                  onChange={(e) => setNewResource({ ...newResource, name: e.target.value })}
+                  className="px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+                <input
+                  type="number"
+                  placeholder="Quantity"
+                  value={newResource.quantity}
+                  onChange={(e) => setNewResource({ ...newResource, quantity: e.target.value })}
+                  className="px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+                <input
+                  type="number"
+                  placeholder="Reorder level"
+                  value={newResource.reorderLevel}
+                  onChange={(e) => setNewResource({ ...newResource, reorderLevel: e.target.value })}
+                  className="px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+                <select
+                  value={newResource.supplier}
+                  onChange={(e) => setNewResource({ ...newResource, supplier: e.target.value })}
+                  className="px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                >
+                  <option value="">Select Supplier</option>
+                  <option value="ABC Suppliers">ABC Suppliers</option>
+                  <option value="XYZ Trade">XYZ Trade</option>
+                  <option value="Global Imports">Global Imports</option>
+                </select>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowAddForm(false);
+                    setNewResource({ name: '', quantity: '', reorderLevel: '', supplier: '' });
+                  }}
+                  className="px-4 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowAddForm(false);
+                    setNewResource({ name: '', quantity: '', reorderLevel: '', supplier: '' });
+                  }}
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                >
+                  Save Resource
+                </button>
+              </div>
+            </motion.div>
+          )}
 
           {/* Filters */}
           <motion.div

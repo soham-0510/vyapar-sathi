@@ -49,10 +49,10 @@ export function Header({ isLoggedIn = false, hideMenu = false }: HeaderProps) {
               </Link>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 hover:bg-accent rounded-lg transition-colors text-foreground"
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
                 aria-label="Toggle menu"
               >
-                <Menu className="w-6 h-6" />
+                {isMenuOpen ? 'Close' : 'Menu'}
               </button>
             </div>
           )}

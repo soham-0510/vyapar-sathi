@@ -30,6 +30,10 @@ export default function DashboardPage() {
       description: 'Only 2 bags remaining',
       color: 'bg-orange-50 dark:bg-orange-950',
       textColor: 'text-orange-700 dark:text-orange-200',
+      buttons: [
+        { label: 'Reorder', action: 'reorder' },
+        { label: 'View Item', action: 'view' },
+      ],
     },
     {
       id: 2,
@@ -39,6 +43,10 @@ export default function DashboardPage() {
       description: 'Payment due in 2 days',
       color: 'bg-red-50 dark:bg-red-950',
       textColor: 'text-red-700 dark:text-red-200',
+      buttons: [
+        { label: 'Pay Now', action: 'pay' },
+        { label: 'View Details', action: 'details' },
+      ],
     },
     {
       id: 3,
@@ -48,6 +56,10 @@ export default function DashboardPage() {
       description: '45 days without sales',
       color: 'bg-gray-50 dark:bg-gray-950',
       textColor: 'text-gray-700 dark:text-gray-200',
+      buttons: [
+        { label: 'Apply Discount', action: 'discount' },
+        { label: 'View Strategy', action: 'strategy' },
+      ],
     },
     {
       id: 4,
@@ -57,6 +69,10 @@ export default function DashboardPage() {
       description: '1 staff member absent today',
       color: 'bg-yellow-50 dark:bg-yellow-950',
       textColor: 'text-yellow-700 dark:text-yellow-200',
+      buttons: [
+        { label: 'Add Staff', action: 'add' },
+        { label: 'View Staff', action: 'view' },
+      ],
     },
   ];
 
@@ -204,13 +220,15 @@ export default function DashboardPage() {
                   >
                     {alert.description}
                   </p>
-                  <div className="flex gap-2">
-                    <button className="text-sm px-3 py-1.5 bg-current bg-opacity-10 hover:bg-opacity-20 rounded-lg transition-all font-medium">
-                      View Details
-                    </button>
-                    <button className="text-sm px-3 py-1.5 bg-current bg-opacity-10 hover:bg-opacity-20 rounded-lg transition-all font-medium">
-                      Take Action
-                    </button>
+                  <div className="flex gap-3 pt-2">
+                    {alert.buttons.map((btn) => (
+                      <button
+                        key={btn.action}
+                        className="text-sm px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-medium flex-1"
+                      >
+                        {btn.label}
+                      </button>
+                    ))}
                   </div>
                 </motion.div>
               ))}
