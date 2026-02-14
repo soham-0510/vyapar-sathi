@@ -209,8 +209,8 @@ export function SterlingGateNavigation() {
           </div>
 
           {/* Menu Links */}
-          <nav className="relative z-10 flex flex-col justify-center h-full px-8 md:px-16 py-16">
-            <ul className="flex flex-col gap-2 md:gap-3">
+          <nav className="relative z-10 flex flex-col justify-start h-full px-8 md:px-16 pt-20 pb-8 overflow-y-auto">
+            <ul className="flex flex-col gap-2 md:gap-3 my-auto">
               {menuItems.map((item) => (
                 <li
                   key={item.index}
@@ -220,7 +220,7 @@ export function SterlingGateNavigation() {
                   <Link
                     href={item.href}
                     onClick={closeMenu}
-                    className="nav-link block text-xl md:text-3xl font-bold text-white hover:text-primary transition-colors"
+                    className="nav-link block text-lg md:text-2xl font-bold text-white hover:text-primary transition-colors"
                   >
                     {item.label}
                   </Link>
