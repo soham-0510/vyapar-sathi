@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Header } from '@/components/header';
 import { SterlingGateNavigation } from '@/components/ui/sterling-gate-navigation';
@@ -9,7 +9,11 @@ import { Edit2, Save, Lock, Bell, LogOut } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 export default function ProfilePage() {
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
+
+  useEffect(() => {
+    setTheme('dark');
+  }, [setTheme]);
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
   const [isEditingBusiness, setIsEditingBusiness] = useState(false);
   const [personalData, setPersonalData] = useState({
@@ -207,23 +211,17 @@ export default function ProfilePage() {
                 </div>
               </button>
 
-              {/* Theme Toggle */}
+              {/* Theme Info */}
               <div className="p-4 border border-border rounded-lg flex items-center justify-between">
                 <div className="flex-1">
                   <p className="font-semibold">Theme</p>
                   <p className="text-sm text-muted-foreground">
-                    Switch between light and dark mode
+                    Dark mode is active
                   </p>
                 </div>
-                <select
-                  value={theme}
-                  onChange={(e) => setTheme(e.target.value)}
-                  className="px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:border-primary"
-                >
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
-                  <option value="system">System</option>
-                </select>
+                <span className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg font-medium text-sm">
+                  Dark
+                </span>
               </div>
             </div>
           </motion.div>

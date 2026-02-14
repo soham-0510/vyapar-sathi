@@ -151,6 +151,10 @@ export function SterlingGateNavigation() {
     { label: 'Payments', href: '/payments', index: 2 },
     { label: 'Staff', href: '/staff', index: 3 },
     { label: 'Suppliers', href: '/suppliers', index: 4 },
+    { label: 'AI Assistant', href: '/ai-assistant', index: 5 },
+    { label: 'Dead Stock', href: '/dead-stock', index: 6 },
+    { label: 'Settings', href: '/settings', index: 7 },
+    { label: 'Profile', href: '/profile', index: 8 },
   ];
 
   return (
@@ -205,40 +209,24 @@ export function SterlingGateNavigation() {
           </div>
 
           {/* Menu Links */}
-          <nav className="relative z-10 flex flex-col justify-center h-full px-8 md:px-16 py-20">
-            <ul className="flex flex-col gap-3 md:gap-4">
+          <nav className="relative z-10 flex flex-col justify-center h-full px-8 md:px-16 py-16">
+            <ul className="flex flex-col gap-2 md:gap-3">
               {menuItems.map((item) => (
                 <li
                   key={item.index}
                   className="menu-list-item overflow-hidden"
-                  data-shape={item.index}
+                  data-shape={item.index < 5 ? item.index : undefined}
                 >
                   <Link
                     href={item.href}
                     onClick={closeMenu}
-                    className="nav-link block text-2xl md:text-4xl font-bold text-foreground hover:text-primary transition-colors"
+                    className="nav-link block text-xl md:text-3xl font-bold text-white hover:text-primary transition-colors"
                   >
                     {item.label}
                   </Link>
                 </li>
               ))}
             </ul>
-
-            {/* Additional Links */}
-            <div className="mt-8 pt-6 border-t border-border flex flex-wrap gap-x-6 gap-y-3" data-menu-fade>
-              <Link href="/ai-assistant" onClick={closeMenu} className="text-base text-muted-foreground hover:text-primary transition-colors">
-                AI Assistant
-              </Link>
-              <Link href="/dead-stock" onClick={closeMenu} className="text-base text-muted-foreground hover:text-primary transition-colors">
-                Dead Stock
-              </Link>
-              <Link href="/settings" onClick={closeMenu} className="text-base text-muted-foreground hover:text-primary transition-colors">
-                Settings
-              </Link>
-              <Link href="/profile" onClick={closeMenu} className="text-base text-muted-foreground hover:text-primary transition-colors">
-                Profile
-              </Link>
-            </div>
           </nav>
         </div>
       </div>
