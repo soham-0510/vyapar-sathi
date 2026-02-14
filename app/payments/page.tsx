@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Header } from '@/components/header';
+import { SterlingGateNavigation } from '@/components/ui/sterling-gate-navigation';
 import { Calendar, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
 const payments = [
@@ -82,6 +83,7 @@ export default function PaymentsPage() {
 
   return (
     <main className="bg-background text-foreground min-h-screen">
+      <SterlingGateNavigation />
       <Header isLoggedIn={true} />
 
       <div className="pt-24 pb-12 px-4 md:px-6">

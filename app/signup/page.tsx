@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Header } from '@/components/header';
@@ -18,6 +19,7 @@ const businessTypes = [
 ];
 
 export default function SignupPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -84,7 +86,8 @@ export default function SignupPage() {
             className="space-y-4"
             onSubmit={(e) => {
               e.preventDefault();
-              // Handle signup
+              // Handle signup and redirect to dashboard
+              router.push('/dashboard');
             }}
           >
             <div>

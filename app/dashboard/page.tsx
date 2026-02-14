@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Header } from '@/components/header';
+import { SterlingGateNavigation } from '@/components/ui/sterling-gate-navigation';
 import { AlertCircle, TrendingUp, Package, Users } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -67,6 +68,7 @@ export default function DashboardPage() {
 
   return (
     <main className="bg-background text-foreground min-h-screen">
+      <SterlingGateNavigation />
       <Header isLoggedIn={true} />
 
       <div className="pt-24 pb-12 px-4 md:px-6">

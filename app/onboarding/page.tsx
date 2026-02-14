@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Header } from '@/components/header';
+import { SterlingGateNavigation } from '@/components/ui/sterling-gate-navigation';
 import { ElegantBackgroundShapes } from '@/components/elegant-background';
 import { ChevronRight, Check } from 'lucide-react';
 
@@ -72,6 +73,11 @@ export default function OnboardingPage() {
 
   const currentStepData = steps[currentStep];
   const progress = ((currentStep + 1) / steps.length) * 100;
+
+  const handleComplete = () => {
+    // Redirect to dashboard after onboarding
+    window.location.href = '/dashboard';
+  };
 
   return (
     <main className="bg-background text-foreground min-h-screen">
@@ -215,7 +221,7 @@ export default function OnboardingPage() {
               Previous
             </button>
             <button
-              onClick={handleNext}
+              onClick={currentStep === steps.length - 1 ? handleComplete : handleNext}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
             >
               {currentStep === steps.length - 1 ? 'Complete' : 'Next'}

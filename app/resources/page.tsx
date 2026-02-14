@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Header } from '@/components/header';
+import { SterlingGateNavigation } from '@/components/ui/sterling-gate-navigation';
 import { Plus, Edit, Repeat2, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -66,6 +67,7 @@ export default function ResourcesPage() {
 
   return (
     <main className="bg-background text-foreground min-h-screen">
+      <SterlingGateNavigation />
       <Header isLoggedIn={true} />
 
       <div className="pt-24 pb-12 px-4 md:px-6">

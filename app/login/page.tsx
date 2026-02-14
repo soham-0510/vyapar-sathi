@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Header } from '@/components/header';
 import { ElegantBackgroundShapes } from '@/components/elegant-background';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -59,7 +61,8 @@ export default function LoginPage() {
             className="space-y-6"
             onSubmit={(e) => {
               e.preventDefault();
-              // Handle login
+              // Handle login and redirect to dashboard
+              router.push('/dashboard');
             }}
           >
             <div>
