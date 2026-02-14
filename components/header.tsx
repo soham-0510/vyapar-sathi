@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { X, Menu, User, LogOut } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { User } from 'lucide-react';
 import Link from 'next/link';
 
 interface HeaderProps {
@@ -11,19 +9,6 @@ interface HeaderProps {
 }
 
 export function Header({ isLoggedIn = false, hideMenu = false }: HeaderProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const menuItems = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Resources', href: '/resources' },
-    { label: 'Payments', href: '/payments' },
-    { label: 'Staff', href: '/staff' },
-    { label: 'Suppliers', href: '/suppliers' },
-    { label: 'Dead Stock', href: '/dead-stock' },
-    { label: 'AI Assistant', href: '/ai-assistant' },
-    { label: 'Profile', href: '/profile' },
-    { label: 'Settings', href: '/settings' },
-  ];
 
   return (
     <>
@@ -47,78 +32,13 @@ export function Header({ isLoggedIn = false, hideMenu = false }: HeaderProps) {
               >
                 <User className="w-6 h-6" />
               </Link>
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
-                aria-label="Toggle menu"
-              >
-                {isMenuOpen ? 'Close' : 'Menu'}
-              </button>
+              {/* Menu button is handled by SterlingGateNavigation - spacer to avoid overlap */}
+              <div className="w-24" />
             </div>
           )}
         </div>
       </header>
 
-      {/* Fullscreen Menu Overlay */}
-      <AnimatePresence>
-        {isMenuOpen && !hideMenu && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-lg"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            <button
-              onClick={() => setIsMenuOpen(false)}
-              className="absolute top-4 right-4 p-2 hover:bg-accent rounded-lg transition-colors text-foreground"
-              aria-label="Close menu"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            <div className="flex flex-col items-center justify-center min-h-screen gap-8 px-4">
-              {menuItems.map((item, index) => (
-                <motion.div
-                  key={item.href}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Link
-                    href={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="text-3xl font-semibold text-foreground hover:text-primary transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </motion.div>
-              ))}
-
-              {isLoggedIn && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: menuItems.length * 0.05 }}
-                  className="mt-8 pt-8 border-t border-border flex items-center gap-2"
-                >
-                  <LogOut className="w-5 h-5 text-destructive" />
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      window.location.href = '/';
-                    }}
-                    className="text-xl font-semibold text-destructive hover:text-red-700 transition-colors"
-                  >
-                    Logout
-                  </button>
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   );
 }

@@ -1,12 +1,25 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from '@/components/header';
 import { SterlingGateNavigation } from '@/components/ui/sterling-gate-navigation';
 import { ElegantBackgroundShapes } from '@/components/elegant-background';
-import { Plus, Phone, Repeat2 } from 'lucide-react';
+import { Plus, Phone, Repeat2, X } from 'lucide-react';
 
-const suppliers = [
+interface Supplier {
+  id: number;
+  name: string;
+  category: string;
+  rating: number;
+  lastOrder: string;
+  avatar: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+}
+
+const defaultSuppliers: Supplier[] = [
   {
     id: 1,
     name: 'ABC Suppliers',
@@ -58,6 +71,16 @@ const suppliers = [
 ];
 
 export default function SuppliersPage() {
+  const [suppliers, setSuppliers] = useState<Supplier[]>(defaultSuppliers);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    category: '',
+    phone: '',
+    email: '',
+    address: '',
+  });
+
   const fadeUpVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: (i: number) => ({
@@ -68,6 +91,30 @@ export default function SuppliersPage() {
         delay: 0.1 + i * 0.05,
       },
     }),
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleAddSupplier = () => {
+    if (!formData.name.trim() || !formData.category.trim()) return;
+
+    const newSupplier: Supplier = {
+      id: Date.now(),
+      name: formData.name,
+      category: formData.category,
+      rating: 0,
+      lastOrder: new Date().toISOString().split('T')[0],
+      avatar: '🏪',
+      phone: formData.phone,
+      email: formData.email,
+      address: formData.address,
+    };
+
+    setSuppliers((prev) => [newSupplier, ...prev]);
+    setFormData({ name: '', category: '', phone: '', email: '', address: '' });
+    setShowAddForm(false);
   };
 
   return (
@@ -92,11 +139,120 @@ export default function SuppliersPage() {
                 Connect and manage your supplier relationships
               </p>
             </div>
-            <button className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors">
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="flex items-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+            >
               <Plus className="w-5 h-5" />
               Add Supplier
             </button>
           </motion.div>
+
+          {/* Add Supplier Form Card */}
+          <AnimatePresence>
+            {showAddForm && (
+              <motion.div
+                initial={{ opacity: 0, y: -20, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                exit={{ opacity: 0, y: -20, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mb-8 overflow-hidden"
+              >
+                <div className="bg-card rounded-xl border border-primary/30 p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold">Add New Supplier</h2>
+                    <button
+                      onClick={() => setShowAddForm(false)}
+                      className="p-2 hover:bg-accent rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                      aria-label="Close form"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+                        Supplier Name <span className="text-destructive">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        placeholder="Enter supplier name"
+                        className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-colors text-foreground placeholder:text-muted-foreground"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+                        Category <span className="text-destructive">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.category}
+                        onChange={(e) => handleInputChange('category', e.target.value)}
+                        placeholder="e.g., Equipment, Raw Materials"
+                        className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-colors text-foreground placeholder:text-muted-foreground"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        placeholder="+91-XXXX-XXXXXX"
+                        className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-colors text-foreground placeholder:text-muted-foreground"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        placeholder="supplier@example.com"
+                        className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-colors text-foreground placeholder:text-muted-foreground"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+                        Address
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.address}
+                        onChange={(e) => handleInputChange('address', e.target.value)}
+                        placeholder="Full address"
+                        className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-colors text-foreground placeholder:text-muted-foreground"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-3 mt-6">
+                    <button
+                      onClick={() => setShowAddForm(false)}
+                      className="px-5 py-2.5 border border-border rounded-lg font-medium hover:bg-accent transition-colors text-foreground"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleAddSupplier}
+                      disabled={!formData.name.trim() || !formData.category.trim()}
+                      className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Supplier
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Suppliers Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -114,7 +270,7 @@ export default function SuppliersPage() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="text-5xl">{supplier.avatar}</div>
                     <div className="flex items-center gap-1">
-                      <span className="text-yellow-500">★</span>
+                      <span className="text-yellow-500">&#9733;</span>
                       <span className="font-semibold text-sm">{supplier.rating}</span>
                     </div>
                   </div>
@@ -135,7 +291,7 @@ export default function SuppliersPage() {
                       <Phone className="w-4 h-4" />
                       Contact
                     </button>
-                    <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-accent text-foreground rounded-lg font-medium hover:bg-accent/80 transition-colors text-sm">
+                    <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent/80 transition-colors text-sm">
                       <Repeat2 className="w-4 h-4" />
                       Reorder
                     </button>

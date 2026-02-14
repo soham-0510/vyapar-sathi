@@ -156,11 +156,14 @@ export function SterlingGateNavigation() {
   return (
     <div ref={containerRef} className="sterling-gate-nav">
       {/* Menu Button */}
-      <button onClick={toggleMenu} className="nav-close-btn fixed top-6 right-6 z-50 flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
-        <span className="menu-button-icon">☰</span>
-        <div className="flex flex-col overflow-hidden">
-          <p>Menu</p>
-          <p>Close</p>
+      <button
+        onClick={toggleMenu}
+        className="nav-close-btn fixed top-5 right-4 md:right-6 z-50 flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+        aria-label="Toggle menu"
+      >
+        <span className="menu-button-icon inline-block h-5 w-5 leading-5 text-center">&#9776;</span>
+        <div className="flex flex-col overflow-hidden h-6 leading-6">
+          <p className="h-6 leading-6">{isMenuOpen ? 'Close' : 'Menu'}</p>
         </div>
       </button>
 
