@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Header } from '@/components/header';
 import { SterlingGateNavigation } from '@/components/ui/sterling-gate-navigation';
+import { ElegantBackgroundShapes } from '@/components/elegant-background';
 import { AlertCircle, TrendingUp, Package, Users } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -67,11 +68,12 @@ export default function DashboardPage() {
   ];
 
   return (
-    <main className="bg-background text-foreground min-h-screen">
+    <main className="bg-background text-foreground min-h-screen relative">
       <SterlingGateNavigation />
       <Header isLoggedIn={true} />
+      <ElegantBackgroundShapes />
 
-      <div className="pt-24 pb-12 px-4 md:px-6">
+      <div className="pt-24 pb-12 px-4 md:px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           {/* Welcome Section */}
           <motion.div

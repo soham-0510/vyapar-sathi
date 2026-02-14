@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Menu } from 'lucide-react';
+import { X, Menu, User, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 
@@ -21,6 +21,7 @@ export function Header({ isLoggedIn = false, hideMenu = false }: HeaderProps) {
     { label: 'Suppliers', href: '/suppliers' },
     { label: 'Dead Stock', href: '/dead-stock' },
     { label: 'AI Assistant', href: '/ai-assistant' },
+    { label: 'Profile', href: '/profile' },
     { label: 'Settings', href: '/settings' },
   ];
 
@@ -38,13 +39,22 @@ export function Header({ isLoggedIn = false, hideMenu = false }: HeaderProps) {
           </Link>
 
           {!hideMenu && (
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 hover:bg-accent rounded-lg transition-colors text-foreground"
-              aria-label="Toggle menu"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/profile"
+                className="p-2 hover:bg-accent rounded-lg transition-colors text-foreground"
+                aria-label="Profile"
+              >
+                <User className="w-6 h-6" />
+              </Link>
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="p-2 hover:bg-accent rounded-lg transition-colors text-foreground"
+                aria-label="Toggle menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </div>
           )}
         </div>
       </header>
@@ -91,15 +101,18 @@ export function Header({ isLoggedIn = false, hideMenu = false }: HeaderProps) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: menuItems.length * 0.05 }}
-                  className="mt-8 pt-8 border-t border-border"
+                  className="mt-8 pt-8 border-t border-border flex items-center gap-2"
                 >
-                  <Link
-                    href="/logout"
-                    onClick={() => setIsMenuOpen(false)}
+                  <LogOut className="w-5 h-5 text-destructive" />
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      window.location.href = '/';
+                    }}
                     className="text-xl font-semibold text-destructive hover:text-red-700 transition-colors"
                   >
                     Logout
-                  </Link>
+                  </button>
                 </motion.div>
               )}
             </div>
