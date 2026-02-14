@@ -148,20 +148,14 @@ export default function PaymentsPage() {
             animate="visible"
             className="space-y-4"
           >
-            {payments.map((payment, index) => (
+            {payments.map((payment) => (
               <div
                 key={payment.id}
-                className={`bg-card rounded-xl p-6 border border-border hover:shadow-lg transition-all group ${getStatusStyles(
-                  payment.status
-                ).split(' ').slice(0, 2).join(' )} bg-opacity-10`}
+                className="bg-card rounded-xl p-6 border border-border hover:shadow-lg transition-all group"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
-                    <div
-                      className={`p-3 rounded-lg ${getStatusStyles(
-                        payment.status
-                      ).split(' ').slice(2).join(' ')} bg-opacity-20`}
-                    >
+                    <div className={`p-3 rounded-lg ${getStatusStyles(payment.status)}`}>
                       {getStatusIcon(payment.status)}
                     </div>
 
@@ -189,11 +183,7 @@ export default function PaymentsPage() {
                     <p className="text-2xl font-bold mb-2">
                       ₹{payment.amount.toLocaleString()}
                     </p>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium inline-block ${getStatusStyles(
-                        payment.status
-                      )}`}
-                    >
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium inline-block ${getStatusStyles(payment.status)}`}>
                       {payment.status}
                     </span>
                   </div>
