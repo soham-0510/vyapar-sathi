@@ -168,7 +168,11 @@ export function SterlingGateNavigation() {
       </button>
 
       {/* Overlay */}
-      <div className="overlay fixed inset-0 bg-black/50 opacity-0 pointer-events-none z-40" style={{ display: 'none' }} onClick={closeMenu} />
+      <div
+        className="overlay fixed inset-0 bg-black/60 opacity-0 z-40"
+        style={{ display: isMenuOpen ? 'block' : 'none', pointerEvents: isMenuOpen ? 'auto' : 'none' }}
+        onClick={closeMenu}
+      />
 
       {/* Navigation Wrapper */}
       <div className="nav-overlay-wrapper fixed inset-0 z-40 pointer-events-none" data-nav="closed" style={{ display: 'none' }}>
@@ -176,7 +180,7 @@ export function SterlingGateNavigation() {
           {/* Background Panels */}
           <div className="absolute inset-0">
             {[0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="backdrop-layer absolute inset-0 bg-background/95" style={{ transform: 'translateX(101%)' }} />
+              <div key={i} className="backdrop-layer absolute inset-0 bg-background" style={{ transform: 'translateX(101%)' }} />
             ))}
           </div>
 
